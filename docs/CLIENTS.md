@@ -57,9 +57,10 @@ lands in `dist/`.
 ## Claude Code: plugin (server + mastering skill)
 
 ```text
-/plugin marketplace add xDarkzx/Audacity4-MCP
-/plugin install audacity4@audacity4-mcp
+/plugin install audacity4 --marketplace xDarkzx/Audacity4-MCP
 ```
+
+(On Claude Code versions before 2.1.275: `/plugin marketplace add xDarkzx/Audacity4-MCP`, then `/plugin install audacity4@audacity4-mcp`.)
 
 That adds the MCP server and the `voiceover-mastering` skill, which walks
 Claude through a measured clean-up and loudness chain. To add only the server:

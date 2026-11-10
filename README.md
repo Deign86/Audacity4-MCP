@@ -93,7 +93,7 @@ cd Audacity4-MCP
 pip install -e .
 ```
 
-**Or skip steps 2–3 entirely**: `uvx --from git+https://github.com/xDarkzx/Audacity4-MCP audacity4-mcp install` registers the server with Claude Code, Claude Desktop, Codex and Antigravity in one go, and `audacity4-mcp doctor` checks the connection. There is also a one-click Claude Desktop extension (`.mcpb`) and a Claude Code plugin with a voiceover-mastering skill — see **[docs/CLIENTS.md](docs/CLIENTS.md)**.
+**Or skip steps 2–3 entirely**: `uvx --from git+https://github.com/xDarkzx/Audacity4-MCP audacity4-mcp install` registers the server with Claude Code, Claude Desktop, Codex and Antigravity in one go, and `audacity4-mcp doctor` checks the connection. In Claude Code: `/plugin install audacity4 --marketplace xDarkzx/Audacity4-MCP`. There is also a one-click Claude Desktop extension (`.mcpb`) and a Claude Code plugin with a voiceover-mastering skill — see **[docs/CLIENTS.md](docs/CLIENTS.md)**.
 
 **3. Point your MCP client at it.** For Claude Desktop / Claude Code:
 
