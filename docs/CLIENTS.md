@@ -57,7 +57,7 @@ have a **Tool profile** option; leave **Bridge token override** empty unless
 Build it yourself with `python scripts/build_mcpb.py` (needs Node.js); the file
 lands in `dist/`.
 
-## Claude Code: plugin (server + mastering skill)
+## Claude Code: plugin
 
 ```text
 /plugin install audacity4 --marketplace xDarkzx/Audacity4-MCP
