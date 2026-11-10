@@ -65,8 +65,7 @@ lands in `dist/`.
 
 (On Claude Code versions before 2.1.275: `/plugin marketplace add xDarkzx/Audacity4-MCP`, then `/plugin install audacity4@audacity4-mcp`.)
 
-That adds the MCP server and the `voiceover-mastering` skill, which walks
-Claude through a measured clean-up and loudness chain. To add only the server:
+That adds the MCP server. Or add it directly:
 
 ```bash
 claude mcp add --scope user audacity4 -- uvx --from git+https://github.com/xDarkzx/Audacity4-MCP audacity4-mcp

@@ -6,7 +6,7 @@
     {
       "name": "audacity4",
       "source": "./",
-      "description": "Audacity 4 MCP server plus a voiceover/podcast mastering skill.",
+      "description": "Audacity 4 MCP server.",
       "category": "media"
     }
   ]
