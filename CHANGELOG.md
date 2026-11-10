@@ -9,6 +9,7 @@ This is early alpha under active daily development.
 ### Added: One-Command Install for Claude, Codex and Antigravity
 
 - `audacity4-mcp install` registers the server with every detected client (Claude Code, Claude Desktop, OpenAI Codex, Google Antigravity), merging into existing configs and backing them up first. `uninstall` reverses it, `print-config` shows the snippets without writing, and `doctor` checks the token, the bridge and an authenticated round trip.
+- `install` also switches the bridge on in Audacity4-Dev-MCP's settings (it ships off), and `enable-bridge` does just that; `doctor` now says when the bridge is switched off rather than only that the port is closed.
 - A Claude Desktop extension (`.mcpb`, uv runtime, built with `scripts/build_mcpb.py`) with a tool-profile setting and an optional token override.
 - A Claude Code plugin and marketplace (`/plugin marketplace add xDarkzx/Audacity4-MCP`) bundling the server and a `voiceover-mastering` skill.
 - `python -m server4` works, so clients can launch an absolute interpreter path instead of relying on `PATH`.

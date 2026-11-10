@@ -21,7 +21,10 @@ uvx --from git+https://github.com/xDarkzx/Audacity4-MCP audacity4-mcp install
 ```
 
 That detects which of Claude Code, Claude Desktop, Codex and Antigravity are
-installed and registers the server with each. Only the `audacity4` entry in
+installed and registers the server with each. It also switches the bridge on in
+Audacity4-Dev-MCP's settings (`[mcp] enabled=true`, off by default), so there is
+no `.ini` to edit by hand; pass `--no-enable-bridge` to skip that, or run
+`audacity4-mcp enable-bridge` on its own. Only the `audacity4` entry in
 each config is written; everything else is left as it was, and a `.bak` copy is
 saved first. Useful flags:
 

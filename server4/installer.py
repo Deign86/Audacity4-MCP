@@ -281,6 +281,83 @@ def detect_clients() -> list[str]:
 
 
 # --------------------------------------------------------------------------
+# Audacity side: the bridge is off by default
+# --------------------------------------------------------------------------
+
+def audacity_settings_file() -> Path:
+    """Audacity4-Dev-MCP's QSettings file (IniFormat, user scope)."""
+    if sys.platform == "win32":
+        base = Path(os.environ.get("APPDATA", _home() / "AppData" / "Roaming"))
+    elif sys.platform == "darwin":
+        base = _home() / ".config"
+    else:
+        base = Path(os.environ.get("XDG_CONFIG_HOME") or _home() / ".config")
+    return base / "Audacity" / "Audacity4Development.ini"
+
+
+def bridge_enabled(path: Path | None = None) -> bool:
+    path = path or audacity_settings_file()
+    if not path.exists():
+        return False
+    section = False
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        s = line.strip()
+        if s.startswith("["):
+            section = s.lower() == "[mcp]"
+        elif section and re.match(r"enabled\s*=", s):
+            return s.split("=", 1)[1].strip().lower() == "true"
+    return False
+
+
+def enable_bridge(path: Path | None = None) -> bool:
+    """Set enabled=true under [mcp], touching nothing else. Returns True if changed."""
+    path = path or audacity_settings_file()
+    lines = path.read_text(encoding="utf-8", errors="replace").splitlines() if path.exists() else []
+    try:
+        i = next(n for n, l in enumerate(lines) if l.strip().lower() == "[mcp]")
+    except StopIteration:
+        if lines and lines[-1].strip():
+            lines.append("")
+        lines += ["[mcp]", "enabled=true"]
+    else:
+        j = i + 1
+        while j < len(lines) and not lines[j].lstrip().startswith("["):
+            if re.match(r"\s*enabled\s*=", lines[j]):
+                if lines[j].strip() == "enabled=true":
+                    return False
+                lines[j] = "enabled=true"
+                break
+            j += 1
+        else:
+            lines.insert(i + 1, "enabled=true")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    _backup(path)
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return True
+
+
+def _bridge_port_open() -> bool:
+    try:
+        with socket.create_connection((BRIDGE_HOST, BRIDGE_PORT), timeout=1):
+            return True
+    except OSError:
+        return False
+
+
+def _enable_bridge_cli() -> str:
+    path = audacity_settings_file()
+    changed = enable_bridge(path)
+    if not changed:
+        return f"Audacity bridge: already enabled ({path})"
+    msg = f"Audacity bridge: enabled -> {path}"
+    if _bridge_port_open():
+        msg += "\n  (Audacity is running - restart it for this to take effect)"
+    else:
+        msg += "\n  (takes effect the next time Audacity starts)"
+    return msg
+
+
+# --------------------------------------------------------------------------
 # doctor
 # --------------------------------------------------------------------------
 
@@ -305,7 +382,11 @@ def doctor() -> int:
         port_open = True
     except OSError as e:
         print(f"bridge         NOT reachable on {BRIDGE_HOST}:{BRIDGE_PORT} ({e}).")
-        print("               Start the Audacity4 MCP fork, and make sure its [mcp] enabled=true.")
+        if bridge_enabled():
+            print("               Start Audacity4-Dev-MCP (the bridge is enabled in its settings).")
+        else:
+            print(f"               The bridge is switched off in {audacity_settings_file()}.")
+            print("               Run `audacity4-mcp enable-bridge`, then start Audacity.")
         port_open = ok = False
 
     if port_open and ok:
@@ -368,6 +449,11 @@ def cli(argv: list[str]) -> int:
                       help="How clients start the server. auto: this Python, or uvx when run via uvx.")
     sp_i.add_argument("--source", default=DEFAULT_SOURCE, help="Package spec uvx installs from.")
 
+    sp_i.add_argument("--no-enable-bridge", action="store_true",
+                      help="Do not switch on the MCP bridge in Audacity's settings.")
+
+    sub.add_parser("enable-bridge", help="Switch on the MCP bridge in Audacity4-Dev-MCP's settings")
+
     sp_u = sub.add_parser("uninstall", help="Remove this server from MCP clients")
     common(sp_u)
 
@@ -382,6 +468,10 @@ def cli(argv: list[str]) -> int:
 
     if a.cmd == "doctor":
         return doctor()
+
+    if a.cmd == "enable-bridge":
+        print(_enable_bridge_cli())
+        return 0
 
     if a.cmd == "print-config":
         launch = resolve_launch(a.launcher, a.profile, a.source)
@@ -402,6 +492,8 @@ def cli(argv: list[str]) -> int:
             print(f"Server command: {launch.command} {' '.join(launch.args)}")
         for c in targets:
             print("  " + apply(c, launch, use_cli=not a.no_claude_cli))
+        if launch and not a.no_enable_bridge:
+            print("  " + _enable_bridge_cli().replace("\n", "\n  "))
         if launch:
             print("\nRestart those apps to pick it up. Then run `audacity4-mcp doctor` "
                   "with Audacity open to check the connection.")

@@ -102,3 +102,29 @@ def test_print_config_writes_nothing(home, capsys):
     assert installer.cli(["print-config", "--launcher", "python"]) == 0
     assert "[mcp_servers.audacity4]" in capsys.readouterr().out
     assert not any(home.iterdir())
+
+
+@pytest.mark.parametrize("before, after", [
+    (None, "[mcp]\nenabled=true\n"),
+    ("foo=1\n", "foo=1\n\n[mcp]\nenabled=true\n"),
+    ("[ui]\nenabled=false\n", "[ui]\nenabled=false\n\n[mcp]\nenabled=true\n"),
+    ("[mcp]\nenabled=false\n[ui]\nx=1\n", "[mcp]\nenabled=true\n[ui]\nx=1\n"),
+    ("[mcp]\nport=1\n[ui]\nenabled=false\n", "[mcp]\nenabled=true\nport=1\n[ui]\nenabled=false\n"),
+])
+def test_enable_bridge_only_touches_mcp_section(home, before, after):
+    path = installer.audacity_settings_file()
+    assert path == home / ".config" / "Audacity" / "Audacity4Development.ini"
+    if before is not None:
+        path.parent.mkdir(parents=True)
+        path.write_text(before)
+    assert installer.bridge_enabled(path) is False
+    assert installer.enable_bridge(path) is True
+    assert path.read_text() == after
+    assert installer.bridge_enabled(path) is True
+    assert installer.enable_bridge(path) is False  # idempotent
+
+
+def test_settings_file_on_windows(home, monkeypatch):
+    monkeypatch.setattr(sys, "platform", "win32")
+    monkeypatch.setenv("APPDATA", str(home / "Roaming"))
+    assert installer.audacity_settings_file() == home / "Roaming" / "Audacity" / "Audacity4Development.ini"

@@ -7,7 +7,7 @@ spend a second loading 159 tool schemas it never uses.
 
 import sys
 
-SUBCOMMANDS = ("install", "uninstall", "doctor", "print-config", "-h", "--help")
+SUBCOMMANDS = ("install", "uninstall", "doctor", "print-config", "enable-bridge", "-h", "--help")
 
 
 def main() -> None:
