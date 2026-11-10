@@ -1,0 +1,48 @@
+{
+  "manifest_version": "0.4",
+  "name": "audacity4",
+  "display_name": "Audacity 4",
+  "version": "0.2.0",
+  "description": "Edit, clean up and master audio in Audacity 4 by talking to Claude.",
+  "long_description": "Connects Claude to a running Audacity 4 (the MCP-enabled build) over a local, token-authenticated bridge on 127.0.0.1:2212. 159 tools: editing, built-in and VST3 effects with live parameter control, labels, local Whisper transcription, loudness analysis and one-call cleanup/mastering pipelines for podcasts, voiceover, audiobooks and music. Everything runs locally; no audio leaves your machine.\n\nRequires the Audacity4-Dev-MCP build of Audacity to be running. The auth token is read automatically from Audacity's profile directory.",
+  "author": { "name": "Daniel Hodgetts", "url": "https://github.com/xDarkzx" },
+  "repository": { "type": "git", "url": "https://github.com/xDarkzx/Audacity4-MCP" },
+  "homepage": "https://github.com/xDarkzx/Audacity4-MCP",
+  "documentation": "https://github.com/xDarkzx/Audacity4-MCP/blob/main/docs/INSTALLATION.md",
+  "support": "https://github.com/xDarkzx/Audacity4-MCP/issues",
+  "license": "Apache-2.0",
+  "keywords": ["audacity", "audio", "mastering", "podcast", "voiceover", "vst3", "transcription"],
+  "server": {
+    "type": "uv",
+    "entry_point": "run_server.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--quiet", "--directory", "${__dirname}", "run_server.py"],
+      "env": {
+        "AUDACITY4_MCP_PROFILE": "${user_config.profile}",
+        "AUDACITY4_MCP_TOKEN": "${user_config.token}"
+      }
+    }
+  },
+  "tools_generated": true,
+  "user_config": {
+    "profile": {
+      "type": "string",
+      "title": "Tool profile",
+      "description": "Which tools to load: full (159 tools), cleanup, editing, mastering, transcription or minimal. Smaller profiles use less of Claude's context per message.",
+      "default": "full",
+      "required": false
+    },
+    "token": {
+      "type": "string",
+      "title": "Bridge token override (optional)",
+      "description": "Leave empty. Only needed if Audacity's profile folder is in an unusual place; paste the contents of its mcp_token file here.",
+      "sensitive": true,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": ["win32", "darwin", "linux"],
+    "runtimes": { "python": ">=3.10" }
+  }
+}

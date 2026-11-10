@@ -6,6 +6,16 @@ This is early alpha under active daily development.
 
 ## [Unreleased]
 
+### Added: One-Command Install for Claude, Codex and Antigravity
+
+- `audacity4-mcp install` registers the server with every detected client (Claude Code, Claude Desktop, OpenAI Codex, Google Antigravity), merging into existing configs and backing them up first. `uninstall` reverses it, `print-config` shows the snippets without writing, and `doctor` checks the token, the bridge and an authenticated round trip.
+- A Claude Desktop extension (`.mcpb`, uv runtime, built with `scripts/build_mcpb.py`) with a tool-profile setting and an optional token override.
+- A Claude Code plugin and marketplace (`/plugin marketplace add xDarkzx/Audacity4-MCP`) bundling the server and a `voiceover-mastering` skill.
+- `python -m server4` works, so clients can launch an absolute interpreter path instead of relying on `PATH`.
+- docs/CLIENTS.md covers every client, including the Codex timeouts a cold start and long pipelines need.
+
+The PyPI 0.1.0 release predates token auth and is rejected by the current fork with an empty "Unauthorized" reply; version bumped to 0.2.0 so a release can replace it.
+
 ### Security: the Auth Token Was World-Readable on Linux and macOS
 
 The auth design held up under audit - the check runs before any method dispatch so no unauthenticated path exists, it fails closed with no token, the comparison is constant-time, and the token is 256 bits from the OS cryptographic source. What did not hold up was how the file gets written.

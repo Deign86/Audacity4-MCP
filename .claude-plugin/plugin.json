@@ -1,0 +1,17 @@
+{
+  "name": "audacity4",
+  "version": "0.2.0",
+  "description": "Drive Audacity 4 from Claude: editing, effects, VST3 plugins, labels, transcription and one-call mastering pipelines, over a local token-authenticated bridge.",
+  "author": { "name": "Daniel Hodgetts" },
+  "homepage": "https://github.com/xDarkzx/Audacity4-MCP",
+  "repository": "https://github.com/xDarkzx/Audacity4-MCP",
+  "license": "Apache-2.0",
+  "keywords": ["audacity", "audio", "mastering", "podcast", "voiceover", "mcp"],
+  "mcpServers": {
+    "audacity4": {
+      "command": "uv",
+      "args": ["run", "--quiet", "--directory", "${CLAUDE_PLUGIN_ROOT}", "audacity4-mcp"],
+      "env": { "AUDACITY4_MCP_PROFILE": "full" }
+    }
+  }
+}

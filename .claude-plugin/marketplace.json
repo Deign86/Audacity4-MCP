@@ -1,0 +1,13 @@
+{
+  "name": "audacity4-mcp",
+  "owner": { "name": "Daniel Hodgetts" },
+  "metadata": { "description": "Audacity 4 automation for Claude Code" },
+  "plugins": [
+    {
+      "name": "audacity4",
+      "source": "./",
+      "description": "Audacity 4 MCP server plus a voiceover/podcast mastering skill.",
+      "category": "media"
+    }
+  ]
+}
