@@ -128,3 +128,12 @@ def test_settings_file_on_windows(home, monkeypatch):
     monkeypatch.setattr(sys, "platform", "win32")
     monkeypatch.setenv("APPDATA", str(home / "Roaming"))
     assert installer.audacity_settings_file() == home / "Roaming" / "Audacity" / "Audacity4Development.ini"
+
+
+def test_unknown_command_exits_instead_of_starting_server(monkeypatch, capsys):
+    from server4 import cli
+    monkeypatch.setattr(sys, "argv", ["audacity4-mcp", 'doctor"C:\\x\\audacity4-mcp.exe"', "install"])
+    with pytest.raises(SystemExit) as e:
+        cli.main()
+    assert e.value.code == 2
+    assert "unknown command" in capsys.readouterr().err

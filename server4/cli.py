@@ -17,6 +17,17 @@ def main() -> None:
 
         sys.exit(cli(args))
 
+    # A bare word that is not a subcommand is a typo (or two commands pasted
+    # onto one line). Starting the stdio server would just hang waiting for a
+    # client, so say what went wrong instead.
+    if args and not args[0].startswith("-"):
+        sys.stderr.write(
+            f"audacity4-mcp: unknown command {args[0]!r}. "
+            f"Commands: {', '.join(c for c in SUBCOMMANDS if not c.startswith('-'))}. "
+            "Run with no arguments to start the MCP server.\n"
+        )
+        sys.exit(2)
+
     from server4.main import main as run_server
 
     run_server()
